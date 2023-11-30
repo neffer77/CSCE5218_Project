@@ -20,7 +20,7 @@ def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, ba
     else:
         activation = 'sigmoid'
 
-    classifier = EyeStateClassifier('../kaggle/dataset_new/train/', '../kaggle/dataset_new/test/',num_filters,kernel_size,pool_size,dense_size,learning_rate, batch_size,activation)
+    classifier = EyeStateClassifier('../../Driver Drowsiness Dataset (DDD)/train', '../../Driver Drowsiness Dataset (DDD)/train',num_filters,kernel_size,pool_size,dense_size,learning_rate, batch_size,activation)
     classifier.load_and_preprocess_data()
     classifier.create_model()
     classifier.train_model()
@@ -45,5 +45,5 @@ optimizer = BayesianOptimization(
 
 optimizer.maximize(
     init_points=2,
-    n_iter=10,
+    n_iter=2,
 )
