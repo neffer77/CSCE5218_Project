@@ -23,8 +23,8 @@ import os
 # In[2]:
 
 
-train_data = '../kaggle/dataset_new/train/'
-test_data = '../kaggle/dataset_new/test/'
+train_data = '/dataset_new/train/'
+test_data = '/dataset_new/test/'
 
 
 # In[3]:

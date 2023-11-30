@@ -1,6 +1,10 @@
 from bayes_opt import BayesianOptimization
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from EyeStateClassifier import EyeStateClassifier
+
+
+
 
 def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, batch_size, activation):
     # Convert continuous variables to discrete as needed
@@ -16,23 +20,11 @@ def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, ba
     else:
         activation = 'sigmoid'
 
-    # Build the model with the given parameters
-    model = Sequential([
-        Conv2D(num_filters, kernel_size=(kernel_size, kernel_size), activation=activation, input_shape=(pic_size, pic_size, 3)),
-        # ... other layers ...
-        Dense(dense_size, activation=activation),
-        Dense(1, activation='sigmoid'),
-    ])
-    
-    # Compile the model
-    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    
-    # Fit the model (use a smaller number of epochs for optimization)
-    model.fit(train_data, train_labels, epochs=10, batch_size=batch_size, validation_split=0.2)
-
-    # Evaluate the model
-    score = model.evaluate(val_data, val_labels)
-    return score[1]  # Assuming you want to optimize for accuracy
+    classifier = EyeStateClassifier('../kaggle/dataset_new/train/', '../kaggle/dataset_new/test/',num_filters,kernel_size,pool_size,dense_size,learning_rate, batch_size,activation)
+    classifier.load_and_preprocess_data()
+    classifier.create_model()
+    classifier.train_model()
+    return classifier.evaluate_model()
 
 # Bounded region of parameter space
 pbounds = {
