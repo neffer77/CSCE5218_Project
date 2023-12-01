@@ -21,7 +21,6 @@ class EyeStateClassifier:
         self.pool_size = pool_size
         self.dense_size = dense_size
         self.batch_size = int(batch_size)
-        print(self.batch_size)
         self.learning_rate = learning_rate
         self.activation = activation
         self.train_data_path = train_data_path
@@ -29,22 +28,23 @@ class EyeStateClassifier:
         self.pic_size = pic_size
         self.model = None
         self.Train_x, self.Train_y, self.X_test, self.y_test, self.X_val, self.y_val = [], [], [], [], [], []
-        self.features = {'Closed':0, 'Open':1}
+        self.features = {'Drowsy':0, 'Non Drowsy':1}
 
     def load_and_preprocess_data(self):
         size = []
+
         for folder in os.listdir(self.train_data_path) :
-            if folder == 'Closed' or folder == 'Open':
-                files = gb.glob(pathname= str( self.train_data_path + folder + '/*.jpg'))
-                for file in files: 
+            if folder == 'Drowsy' or folder == 'Non Drowsy':
+                files = gb.glob(pathname= str( self.train_data_path + folder + '/*.png'))
+                for file in files:
                     image = plt.imread(file)
                     size.append(image.shape)
             else:
                 break
         
         for folder in  os.listdir(self.train_data_path) : 
-            if folder == 'Closed' or folder == 'Open':
-                files = gb.glob(pathname= str( self.train_data_path + folder + '/*.jpg'))
+            if folder == 'Drowsy' or folder == 'Non Drowsy':
+                files = gb.glob(pathname= str( self.train_data_path + folder + '/*.png'))
                 for file in files: 
                     image = cv2.imread(file)
                     image_array = cv2.resize(image,(self.pic_size,self.pic_size))
@@ -63,8 +63,8 @@ class EyeStateClassifier:
 
         
         for folder in  os.listdir(self.test_data_path) : 
-            if folder == 'Closed' or folder == 'Open':
-                files = gb.glob(pathname= str( self.test_data_path + folder + '/*.jpg'))
+            if folder == 'Drowsy' or folder == 'Non Drowsy':
+                files = gb.glob(pathname= str( self.test_data_path + folder + '/*.png'))
                 for file in files: 
                     image = cv2.imread(file)
                     image_array = cv2.resize(image , (self.pic_size,self.pic_size))
@@ -176,7 +176,7 @@ class EyeStateClassifier:
         plt.show()
 
     def save_model(self, file_path):
-        self.model.save('cnnCat.h5')
+        self.model.save('file_path')
 
     def load_model_local(self, file_path):
         self.model = load_model(file_path)

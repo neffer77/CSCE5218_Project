@@ -20,10 +20,16 @@ def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, ba
     else:
         activation = 'sigmoid'
 
-    classifier = EyeStateClassifier('../../Driver Drowsiness Dataset (DDD)/train', '../../Driver Drowsiness Dataset (DDD)/train',num_filters,kernel_size,pool_size,dense_size,learning_rate, batch_size,activation)
+    classifier = EyeStateClassifier('/Users/connor.neff/OneDrive - ServiceNow/CSCE 5218/Driver Drowsiness Dataset (DDD)/train/', '/Users/connor.neff/OneDrive - ServiceNow/CSCE 5218/Driver Drowsiness Dataset (DDD)/test/',num_filters,kernel_size,pool_size,dense_size,learning_rate, batch_size,activation)
     classifier.load_and_preprocess_data()
     classifier.create_model()
     classifier.train_model()
+
+    # Save the model
+    classifier.save_model(f'model_iteration_{iteration}.h5')
+
+    # Clear the TensorFlow session
+    tf.keras.backend.clear_session()
     return classifier.evaluate_model()
 
 # Bounded region of parameter space
@@ -43,7 +49,12 @@ optimizer = BayesianOptimization(
     random_state=1,
 )
 
-optimizer.maximize(
-    init_points=2,
-    n_iter=2,
-)
+for i in range(number_of_iterations):
+    optimizer.maximize(
+        init_points=0,
+        n_iter=1,
+        acq='ei',  # Example acquisition function
+        xi=0.01,
+        kappa=2.576,
+        **{'iteration': i}
+    )
