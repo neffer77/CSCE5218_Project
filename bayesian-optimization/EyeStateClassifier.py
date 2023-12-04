@@ -14,7 +14,7 @@ from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
 class EyeStateClassifier:
-    def __init__(self, train_data_path, test_data_path, num_filters, kernel_size, pool_size, dense_size, learning_rate, batch_size, activation,pic_size=140):
+    def __init__(self, train_data_path, test_data_path, num_filters, kernel_size, pool_size, dense_size, learning_rate, batch_size, activation,pic_size=70):
     # Convert continuous variables to discrete as needed
         self.num_filters = num_filters
         self.kernel_size = kernel_size
@@ -104,17 +104,9 @@ class EyeStateClassifier:
         Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
         MaxPooling2D(self.pool_size,self.pool_size),
         Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),    
-        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
         MaxPooling2D(self.pool_size,self.pool_size),
-        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
-        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
-        MaxPooling2D(self.pool_size,self.pool_size),
-        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
-        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
-        Flatten() ,    
-        Dense(self.dense_size,activation=self.activation) ,    
-        Dense(self.dense_size,activation=self.activation) ,
-        Dense(self.dense_size,activation=self.activation) ,
+        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),    
+        Flatten() ,      
         Dense(self.dense_size,activation=self.activation) ,
         Dense(self.dense_size,activation=self.activation) ,
         Dense(1,activation='sigmoid') ,    
@@ -128,8 +120,8 @@ class EyeStateClassifier:
     def train_model(self):
         data_generator = ImageDataGenerator(horizontal_flip=True, rotation_range=10, zoom_range=0.2, 
                              brightness_range=(0.1, 0.8))
-        epochs = 20
-        Model = self.model.fit(data_generator.flow(self.Train_x,self.Train_y, batch_size=self.batch_size), epochs=epochs,
+        epochs = 10
+        self.model.fit(data_generator.flow(self.Train_x,self.Train_y, batch_size=self.batch_size), epochs=epochs,
                                         validation_data=(self.X_val,self.y_val), validation_steps=1, verbose=1)
     
 
@@ -176,10 +168,9 @@ class EyeStateClassifier:
         plt.show()
 
     def save_model(self, file_path):
-        self.model.save('file_path')
+        self.model.save(file_path)
 
     def load_model_local(self, file_path):
         self.model = load_model(file_path)
 
-# Usage
 
