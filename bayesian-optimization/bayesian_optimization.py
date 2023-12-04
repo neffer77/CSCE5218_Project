@@ -4,8 +4,9 @@ from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from EyeStateClassifier import EyeStateClassifier
 from sklearn.gaussian_process.kernels import Matern
 import tensorflow as tf
+import json
 count = 0
-
+import matplotlib.pyplot as plt
 
 
 
@@ -21,7 +22,7 @@ def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, ba
     if activation < 0.5:
         activation = 'relu'
     else:
-        activation = 'relu'
+        activation = 'sigmoid'
     global classifier
     classifier = EyeStateClassifier('/Users/connor.neff/OneDrive - ServiceNow/CSCE 5218/Driver Drowsiness Dataset (DDD)/train/', '/Users/connor.neff/OneDrive - ServiceNow/CSCE 5218/Driver Drowsiness Dataset (DDD)/test/',num_filters,kernel_size,pool_size,dense_size,learning_rate, batch_size,activation)
     classifier.load_and_preprocess_data()
@@ -34,12 +35,17 @@ def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, ba
     classifier.save_model(f'model_iteration_{count}.keras')
     return classifier.evaluate_model()
 
+
+def save_progress(optimization, filename="progress.json"):
+    with open(filename, "w") as f:
+        json.dump(optimization.res, f)
+
 # Bounded region of parameter space
 pbounds = {
-    'num_filters': (16, 128),
+    'num_filters': (16, 64),
     'kernel_size': (3, 5),
     'pool_size': (2, 3),
-    'dense_size': (64, 128),
+    'dense_size': (32, 64),
     'learning_rate': (1e-4, 1e-2),
     'batch_size': (16, 32),
     'activation': (0, 1),  # Representing a choice between two activation functions
@@ -57,3 +63,15 @@ for i in range(number_of_iterations):
         init_points=0,
         n_iter=2
     )
+    save_progress(optimizer)
+
+target_results = [res["target"] for res in optimizer.res]
+iterations = range(1, len(target_results) + 1)
+
+plt.figure(figsize=(10, 5))
+plt.plot(iterations, target_results, marker='o')
+plt.title('Optimization Progress')
+plt.xlabel('Iteration')
+plt.ylabel('Objective Function Value')
+plt.grid(True)
+plt.show()

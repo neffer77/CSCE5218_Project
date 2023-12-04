@@ -12,6 +12,8 @@ from sklearn.model_selection import train_test_split
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+from keras.layers import BatchNormalization
+
 
 class EyeStateClassifier:
     def __init__(self, train_data_path, test_data_path, num_filters, kernel_size, pool_size, dense_size, learning_rate, batch_size, activation,pic_size=70):
@@ -101,13 +103,16 @@ class EyeStateClassifier:
     def create_model(self):
         self.model = Sequential([
         Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation,input_shape=(self.pic_size,self.pic_size,3)),
+        BatchNormalization(),
         Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
         MaxPooling2D(self.pool_size,self.pool_size),
         Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),    
         MaxPooling2D(self.pool_size,self.pool_size),
-        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),    
+        Conv2D(self.num_filters,kernel_size=(self.kernel_size,self.kernel_size),activation=self.activation),
+        BatchNormalization(),    
         Flatten() ,      
         Dense(self.dense_size,activation=self.activation) ,
+        BatchNormalization(),
         Dense(self.dense_size,activation=self.activation) ,
         Dense(1,activation='sigmoid') ,    
         ])
