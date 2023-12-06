@@ -7,7 +7,7 @@ import tensorflow as tf
 import json
 count = 0
 import matplotlib.pyplot as plt
-
+import datetime
 
 
 def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, batch_size, activation):
@@ -37,6 +37,11 @@ def cnn_model(num_filters, kernel_size, pool_size, dense_size, learning_rate, ba
 
 
 def save_progress(optimization, filename="progress.json"):
+    now = datetime.datetime.now()
+
+# Format the date and time as a string, including milliseconds
+    formatted_date_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+    filename = "progress_" + formatted_date_time + ".json"
     with open(filename, "w") as f:
         json.dump(optimization.res, f)
 
@@ -45,7 +50,7 @@ pbounds = {
     'num_filters': (16, 64),
     'kernel_size': (3, 5),
     'pool_size': (2, 3),
-    'dense_size': (32, 64),
+    'dense_size': (32, 128),
     'learning_rate': (1e-4, 1e-2),
     'batch_size': (16, 32),
     'activation': (0, 1),  # Representing a choice between two activation functions
@@ -61,7 +66,7 @@ number_of_iterations = 1
 for i in range(number_of_iterations):
     optimizer.maximize(
         init_points=0,
-        n_iter=2
+        n_iter=3
     )
     save_progress(optimizer)
 
